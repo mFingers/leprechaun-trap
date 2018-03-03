@@ -10,7 +10,8 @@ struct Color {
   int blue;
 };
 
-int led[3] = {9, 10, 11};
+int led1[] = {9, 10, 11};
+int led2[] = {3, 5, 6};
 
 Color RED    = { 255, 0, 0 };
 Color ORANGE = { 255, 127, 0 };
@@ -19,7 +20,7 @@ Color GREEN  = { 0, 255, 0 };
 Color BLUE   = { 0, 0, 255 };
 Color VIOLET = { 148, 0, 211 };
 
-Color rainbow[6] = { RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET };
+Color rainbow[] = { RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET };
 
 void setColor(int led[], Color color) {
   int red = color.red;
@@ -45,15 +46,21 @@ void cycleColors(int led[], Color colors[], int duration) {
 }
 
 void setupLed(int led[]) {
-  pinMode(led[0], OUTPUT);
-  pinMode(led[1], OUTPUT);
-  pinMode(led[2], OUTPUT);
+  for(int i=0; i<3; i++) {
+    pinMode(led[i], OUTPUT);
+    #ifdef COMMON_ANODE
+      digitalWrite(led[i], HIGH);
+    #else
+      digitalWrite(led[i], LOW);
+    #endif
+  }
 }
 
 void setup() {
-  setupLed(led);
+  setupLed(led1);
+  setupLed(led2);
 }
 
 void loop() {
-  cycleColors(led, rainbow, 500);
+  cycleColors(led2, rainbow, 500);
 }
