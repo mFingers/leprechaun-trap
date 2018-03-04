@@ -10,8 +10,14 @@ struct Color {
   int blue;
 };
 
-int led1[] = {9, 10, 11};
-int led2[] = {3, 5, 6};
+struct Led {
+  int red;
+  int green;
+  int blue;
+}
+
+Led led1 = {9, 10, 11};
+Led led2 = {3, 5, 6};
 
 Color RED    = { 255, 0, 0 };
 Color ORANGE = { 255, 127, 0 };
@@ -22,7 +28,8 @@ Color VIOLET = { 148, 0, 211 };
 
 Color rainbow[] = { RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET };
 
-void setColor(int led[], Color color) {
+
+void setColor(Led led, Color color) {
   int red = color.red;
   int green = color.green;
   int blue = color.blue;
@@ -33,27 +40,31 @@ void setColor(int led[], Color color) {
     blue = 255 - blue;
   #endif
 
-  analogWrite(led[0], red);
-  analogWrite(led[1], green);
-  analogWrite(led[2], blue);
+  analogWrite(led.red, red);
+  analogWrite(led.green, green);
+  analogWrite(led.blue, blue);
 }
 
-void cycleColors(int led[], Color colors[], int duration) {
+void cycleColors(Led led, Color colors[], int duration) {
   for(int i=0; i<6; i++) {
     setColor(led, colors[i]);
     delay(duration);
   }
 }
 
-void setupLed(int led[]) {
-  for(int i=0; i<3; i++) {
-    pinMode(led[i], OUTPUT);
-    #ifdef COMMON_ANODE
-      digitalWrite(led[i], HIGH);
-    #else
-      digitalWrite(led[i], LOW);
-    #endif
-  }
+void setupLed(Led led) {
+  pinMode(led.red, OUTPUT);
+  pinMode(led.green, OUTPUT);
+  pinMode(led.blue, OUTPUT);
+  #ifdef COMMON_ANODE
+    digitalWrite(led.red, HIGH);
+    digitalWrite(led.green, HIGH);
+    digitalWrite(led.blue, HIGH);
+  #else
+    digitalWrite(led.red, LOW);
+    digitalWrite(led.green, LOW);
+    digitalWrite(led.blue, LOW);
+  #endif
 }
 
 void setup() {
