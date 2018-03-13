@@ -1,8 +1,9 @@
 /*
 
 */
+#include "Tlc5940.h"
 
-#define COMMON_ANODE
+#define NUM_LEDS 5
 
 struct Color {
   int red;
@@ -16,9 +17,6 @@ struct Led {
   int blue;
 };
 
-Led led1 = {9, 10, 11};
-Led led2 = {3, 5, 6};
-
 Color RED    = { 255, 0, 0 };
 Color ORANGE = { 255, 127, 0 };
 Color YELLOW = { 255, 255, 0 };
@@ -27,54 +25,31 @@ Color BLUE   = { 0, 0, 255 };
 Color VIOLET = { 148, 0, 211 };
 
 Color rainbow[] = { RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET };
-Led runway[] = { led1, led2 };
 
 void setColor(Led led, Color color) {
-  int red = color.red;
-  int green = color.green;
-  int blue = color.blue;
-
-  #ifdef COMMON_ANODE
-    red = 255 - red;
-    green = 255 - green;
-    blue = 255 - blue;
-  #endif
-
-  analogWrite(led.red, red);
-  analogWrite(led.green, green);
-  analogWrite(led.blue, blue);
+  Tlc.set(led.red, color.red * 16);
+  Tlc.set(led.green, color.green * 16);
+  Tlc.set(led.blue, color.blue * 16);
 }
 
-void cycleColors(Led leds[], Color colors[], int duration) {
+void cycleColors(int numLeds, Color colors[], int duration) {
   for(int i=0; i<6; i++) {
-    for(int l=0; l<2; l++) {
+    for(int l=0; l<numLeds; l++) {
       int color = (i + l) % 6;
-      setColor(leds[l], colors[color]) ;
+      Led led = { l * 3, l*3+1, l*3+2 };
+      setColor(led, colors[color]) ;
     }
+    Tlc.update();
     delay(duration);
   }
 }
 
-void setupLed(Led led) {
-  pinMode(led.red, OUTPUT);
-  pinMode(led.green, OUTPUT);
-  pinMode(led.blue, OUTPUT);
-  #ifdef COMMON_ANODE
-    digitalWrite(led.red, HIGH);
-    digitalWrite(led.green, HIGH);
-    digitalWrite(led.blue, HIGH);
-  #else
-    digitalWrite(led.red, LOW);
-    digitalWrite(led.green, LOW);
-    digitalWrite(led.blue, LOW);
-  #endif
-}
-
 void setup() {
-  setupLed(led1);
-  setupLed(led2);
+  Tlc.init();
 }
 
 void loop() {
-  cycleColors(runway, rainbow, 500);
+  Tlc.clear();
+
+  cycleColors(NUM_LEDS, rainbow, 250);
 }
