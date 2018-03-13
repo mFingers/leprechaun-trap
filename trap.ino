@@ -27,9 +27,14 @@ Color VIOLET = { 148, 0, 211 };
 Color rainbow[] = { RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET };
 
 void setColor(Led led, Color color) {
-  Tlc.set(led.red, color.red * 16);
-  Tlc.set(led.green, color.green * 16);
-  Tlc.set(led.blue, color.blue * 16);
+  // Can multiply each color by a brightness factor up to 16
+  //   16 * 255 = 4080 (can go up to 4095...)
+  //   As for color, what's important is the ratio between them
+  //   which the RGB codes contain.
+  float brightnessFactor = 0.5;
+  Tlc.set(led.red, color.red * brightnessFactor);
+  Tlc.set(led.green, color.green * brightnessFactor);
+  Tlc.set(led.blue, color.blue * brightnessFactor);
 }
 
 void cycleColors(int numLeds, Color colors[], int duration) {
