@@ -14,7 +14,7 @@ struct Led {
   int red;
   int green;
   int blue;
-}
+};
 
 Led led1 = {9, 10, 11};
 Led led2 = {3, 5, 6};
@@ -27,7 +27,7 @@ Color BLUE   = { 0, 0, 255 };
 Color VIOLET = { 148, 0, 211 };
 
 Color rainbow[] = { RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET };
-
+Led runway[] = { led1, led2 };
 
 void setColor(Led led, Color color) {
   int red = color.red;
@@ -45,9 +45,12 @@ void setColor(Led led, Color color) {
   analogWrite(led.blue, blue);
 }
 
-void cycleColors(Led led, Color colors[], int duration) {
+void cycleColors(Led leds[], Color colors[], int duration) {
   for(int i=0; i<6; i++) {
-    setColor(led, colors[i]);
+    for(int l=0; l<2; l++) {
+      int color = (i + l) % 6;
+      setColor(leds[l], colors[color]) ;
+    }
     delay(duration);
   }
 }
@@ -73,5 +76,5 @@ void setup() {
 }
 
 void loop() {
-  cycleColors(led2, rainbow, 500);
+  cycleColors(runway, rainbow, 500);
 }
